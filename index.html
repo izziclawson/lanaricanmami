@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Your Cute Link Hub</title>
+<meta name="description" content="Custom mini link page — mobile-first, image background, diagonal buttons" />
+
+<!-- Simple styling (no external libs) -->
+<style>
+  :root{
+    --accent: 255,115,150; /* pink-ish accent (r,g,b) */
+    --muted: rgba(0,0,0,0.45);
+    --glass: rgba(255,255,255,0.06);
+    --btn-radius: 14px;
+    --btn-padding: 14px 20px;
+    --max-width: 680px;
+  }
+
+  /* Basic reset */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    color: #fff;
+    background: #111;
+  }
+
+  /* Full-bleed background image you replace with assets/bg.jpg */
+  .bg{
+    position:fixed; inset:0; z-index:-2;
+    background-image: url('assets/bg.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: saturate(0.95) contrast(0.9);
+  }
+
+  /* subtle overlay for legibility */
+  .overlay{
+    position:fixed; inset:0; z-index:-1;
+    background: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.56));
+    backdrop-filter: blur(3px);
+  }
+
+  /* Page container - centered, narrow for phones */
+  .wrap{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+
+  .card{
+    width:100%;
+    max-width:var(--max-width);
+    position:relative;
+    padding: 36px 20px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:center;
+  }
+
+  /* header avatar / small top row */
+  .profile {
+    display:flex;
+    gap:12px;
+    align-items:center;
+    width:100%;
+    justify-content:center;
+  }
+  .avatar{
+    width:72px;height:72px;border-radius:14px; overflow:hidden;
+    box-shadow:0 6px 18px rgba(0,0,0,0.45);
+    border: 2px solid rgba(255,255,255,0.06);
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover}
+
+  .handle{
+    text-align:center;
+    line-height:1;
+  }
+  .handle .name{font-weight:700;font-size:18px}
+  .handle .sub{font-size:13px;opacity:0.85;margin-top:2px}
+
+  /* button field container - uses absolute positioned items to get diagonal look */
+  .links-area{
+    width:100%;
+    height:420px; /* mostly for mobile presentation */
+    max-width:520px;
+    position:relative;
+    margin-top:6px;
+  }
+
+  /* base style for link buttons */
+  .btn{
+    position:absolute;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    text-decoration:none;
+    color: white;
+    font-weight:600;
+    border-radius:var(--btn-radius);
+    padding:var(--btn-padding);
+    min-width: 44%;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    transition: transform .18s ease, box-shadow .18s ease, opacity .12s ease;
+    border: 1px solid rgba(255,255,255,0.06);
+    backdrop-filter: blur(4px);
+  }
+
+  /* individual positions (feel free to tweak percentages) */
+  .btn.a { top:6%; left:4%; transform: rotate(-6deg); }
+  .btn.b { top:18%; right:6%; transform: rotate(6deg); }
+  .btn.c { top:42%; left:8%; transform: rotate(-4deg); }
+  .btn.d { top:58%; right:12%; transform: rotate(5deg); }
+
+  /* main center big button */
+  .btn.main {
+    left:50%;
+    top:34%;
+    transform: translate(-50%,-50%);
+    min-width:86%;
+    padding:18px 28px;
+    font-size:18px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow: 0 12px 40px rgba(var(--accent),0.18), 0 4px 12px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  /* colored backgrounds for buttons (solid-ish so they read on photo) */
+  .btn[data-theme="dark"]{ background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.5)); }
+  .btn[data-theme="soft"]{ background: rgba(255,255,255,0.06); }
+  .btn[data-theme="accent"]{
+    background: linear-gradient(180deg, rgba(var(--accent),0.16), rgba(var(--accent),0.08));
+    border: 1px solid rgba(var(--accent),0.22);
+  }
+
+  /* glow for the main highlighted button */
+  .btn.main::after{
+    content:'';
+    position:absolute;
+    inset:-6px;
+    z-index:-1;
+    border-radius:24px;
+    background: radial-gradient(ellipse at center, rgba(var(--accent),0.14), rgba(0,0,0,0));
+    filter: blur(12px);
+    opacity:1;
+  }
+
+  .btn:hover{ transform: translateY(-6px) scale(1.01); box-shadow:0 18px 44px rgba(0,0,0,0.6) }
+  .btn:active{ transform: translateY(-2px) scale(.996); }
+
+  /* label smaller text */
+  .btn .label { font-size:14px; opacity:0.95; }
+  .btn .small { display:block; font-weight:500; font-size:12px; opacity:0.8; margin-top:6px; }
+
+  /* bottom area — blurb, socials, credits */
+  .bottom{
+    width:100%;
+    margin-top:6px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:center;
+    padding:8px 12px 32px;
+  }
+
+  .blurb{
+    width:100%;
+    max-width:520px;
+    text-align:center;
+    font-size:13px;
+    padding:8px 14px;
+    color: #f3f3f3;
+    opacity:0.95;
+    background: rgba(0,0,0,0.22);
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,0.04);
+  }
+
+  .socials{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .socials a{ display:inline-flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:10px; background: rgba(255,255,255,0.04); text-decoration:none; color: white; border:1px solid rgba(255,255,255,0.04) }
+  .socials svg{ width:20px; height:20px; opacity:0.95 }
+
+  .credits{
+    font-size:12px;
+    opacity:0.8;
+    text-align:center;
+  }
+
+  /* responsive: larger screens */
+  @media(min-width:820px){
+    .links-area{ height:420px }
+    .card{ padding:48px; gap:22px }
+    .avatar{ width:96px;height:96px;border-radius:18px; }
+  }
+
+  /* allow user to edit blurb/credits on-device (optional) */
+  [contenteditable]{ outline: none; caret-color: rgba(var(--accent),1);}
+</style>
+</head>
+<body>
+
+  <div class="bg" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"></div>
+
+  <main class="wrap" role="main">
+    <section class="card" aria-label="Link hub">
+      <div class="profile" role="banner">
+        <div class="avatar" title="your avatar">
+          <!-- replace avatar.jpg in assets or change src -->
+          <img src="assets/avatar.jpg" alt="avatar" onerror="this.style.display='none'">
+        </div>
+        <div class="handle">
+          <div class="name">@yourhandle</div>
+          <div class="sub">tiny description • add tags</div>
+        </div>
+      </div>
+
+      <!-- LINKS AREA (diagonal / catty-corner layout) -->
+      <div class="links-area" aria-hidden="false">
+
+        <!-- Top-left diagonal -->
+        <a class="btn a" data-theme="soft" href="#" target="_blank" rel="noopener noreferrer">
+          <span class="label">Loyal Fans</span>
+          <span class="small">members-only</span>
+        </a>
+
+        <!-- Top-right diagonal -->
+        <a class="btn b" data-theme="dark" href="#" target="_blank" rel="noopener noreferrer">
+          <span class="label">Demo</span>
+          <span class="small">listen / preview</span>
+        </a>
+
+        <!-- main highlighted center button (bigger) -->
+        <a class="btn main" data-theme="accent" href="#" target="_blank" rel="noopener noreferrer" aria-label="Custom Request">
+          <span class="label">Custom Request</span>
+          <span class="small">book a custom piece</span>
+        </a>
+
+        <!-- middle-left -->
+        <a class="btn c" data-theme="soft" href="#" target="_blank" rel="noopener noreferrer">
+          <span class="label">Feed Finder</span>
+          <span class="small">updates & pics</span>
+        </a>
+
+        <!-- lower-right -->
+        <a class="btn d" data-theme="dark" href="#" target="_blank" rel="noopener noreferrer">
+          <span class="label">Merch</span>
+          <span class="small">shop / prints</span>
+        </a>
+
+      </div>
+
+      <!-- bottom: editable blurb, socials, and credits -->
+      <div class="bottom">
+        <!-- make editable so you can click and change text directly when hosted -->
+        <div class="blurb" contenteditable="true" aria-label="Edit your blurb">
+          Hi — I make custom stuff, post behind-the-scenes and more. Tap any link above. Edit this text directly.
+        </div>
+
+        <div class="socials" aria-label="Social links">
+          <a href="https://instagram.com/yourhandle" target="_blank" rel="noopener noreferrer" title="Instagram">
+            <!-- Instagram SVG -->
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect width="24" height="24" rx="5" fill="none"></rect><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 6.5h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+
+          <a href="https://twitter.com/yourhandle" target="_blank" rel="noopener noreferrer" title="Twitter / X">
+            <!-- Twitter/X SVG -->
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M23 4.5c-.7.3-1.5.6-2.3.7.8-.5 1.4-1.4 1.7-2.4-.8.5-1.7.8-2.7 1-1.7-1.8-4.6-1.6-6.2.3-1 .9-1.2 2.2-.6 3.4-3.3-.2-6.2-1.8-8.1-4.3-.9 1.6-.4 3.6 1 4.6-.6 0-1.1-.2-1.6-.4v.1c0 2.2 1.5 4 3.6 4.4-.5.1-1.1.2-1.6.1.5 1.5 2 2.5 3.7 2.5A8.2 8.2 0 0 1 2 19.8c1.9 1.2 4.2 1.9 6.6 1.9 7.9 0 12.2-7 12.2-13V7.4c.8-.6 1.5-1.4 2-2.4z" stroke="currentColor" stroke-width="0.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+
+          <a href="mailto:hello@youremail.com" title="Email">
+            <!-- mail SVG -->
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 8.5v7A3.5 3.5 0 0 0 6.5 19h11A3.5 3.5 0 0 0 21 15.5v-7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 6.5L12 13 3 6.5" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+
+        <div class="credits" contenteditable="true">
+          Photo & edit by @yourhandle • Photo credits: @photog • <span style="text-decoration:underline">Instagram: @yourhandle</span>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+<!-- tiny script: replace with your real links and optionally prefill text from query params -->
+<script>
+  // Example: if you want to set the hrefs easily, map them here
+  const linkMap = {
+    "Loyal Fans":"https://example.com/loyal-fans",
+    "Demo":"https://example.com/demo",
+    "Custom Request":"https://example.com/custom-request",
+    "Feed Finder":"https://example.com/feed",
+    "Merch":"https://example.com/shop"
+  };
+
+  // wire up anchors based on their label text (fast & simple)
+  document.querySelectorAll('.btn').forEach(btn=>{
+    const label = btn.querySelector('.label')?.textContent?.trim();
+    if(label && linkMap[label]) btn.href = linkMap[label];
+  });
+
+  // Optional: Prevent contenteditable blurb from losing formatting on mobile accidental enter
+  document.querySelectorAll('[contenteditable]').forEach(el=>{
+    el.addEventListener('keydown', (e)=> {
+      // allow basic keys but intercept Cmd/Ctrl+S to avoid saving the page in the browser
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        alert('To save changes permanently, edit the file in your repo.');
+      }
+    });
+  });
+
+  // Accessibility: make sure buttons are tabbable
+  document.querySelectorAll('.btn').forEach(a => a.setAttribute('tabindex','0'));
+</script>
+</body>
+</html>
