@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Custom Request — LanaRicanMami</title>
+<meta name="description" content="Custom Request form" />
+
+<style>
+  :root{
+    --accent: 255,115,150;
+    --max-width: 900px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background:#111;
+    color:#fff;
+  }
+  .bg{ position:fixed; inset:0; z-index:-2; background-image:url('assets/background.png'); background-size:cover; background-position:center; filter: saturate(0.95) contrast(0.9); }
+  .overlay{ position:fixed; inset:0; z-index:-1; background: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.56)); backdrop-filter: blur(3px); }
+
+  .wrap{ min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:36px 20px; }
+  .panel{ width:100%; max-width:var(--max-width); background: rgba(0,0,0,0.28); border-radius:14px; padding:20px; border:1px solid rgba(255,255,255,0.04); box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
+
+  .head{ display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+  .avatar{ width:62px; height:62px; border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,0.06) }
+  .avatar img{ width:100%; height:100%; object-fit:cover }
+  .title{ font-weight:700; font-size:18px }
+  .sub{ font-size:13px; opacity:0.85 }
+
+  .iframe-wrap{ width:100%; aspect-ratio: 3 / 4; background: rgba(255,255,255,0.02); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.04) }
+  .iframe-wrap iframe{ width:100%; height:100%; border:0; }
+
+  .back{ display:inline-block; margin-top:12px; text-decoration:none; color:#fff; padding:8px 12px; border-radius:10px; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.06) }
+
+  @media(min-width:820px){
+    .wrap{ padding:48px; align-items:center; }
+    .panel{ padding:28px; }
+    .iframe-wrap{ aspect-ratio: 16/9; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"></div>
+
+  <main class="wrap" role="main">
+    <section class="panel" aria-label="Custom request form">
+      <div class="head">
+        <div class="avatar"><img src="assets/avatar.png" alt="avatar" onerror="this.style.display='none'"></div>
+        <div>
+          <div class="title">@lanaricanmami</div>
+          <div class="sub">Custom Request — tell me what you want</div>
+        </div>
+      </div>
+
+      <!-- Embed your Google Form here.
+           To get the embed URL:
+           1) Open your Google Form -> Click "Send" (paper plane icon)
+           2) Click the "< >" embed option, copy the iframe HTML
+           3) Use the "src" value from that iframe and paste it below as the src.
+           Example embed src format:
+           https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true
+      -->
+      <div class="iframe-wrap" aria-hidden="false">
+        <!-- REPLACE the src below with your form's embed URL -->
+        <iframe src="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+      </div>
+
+      <a class="back" href="index.html">← Back</a>
+    </section>
+  </main>
+</body>
+</html>
